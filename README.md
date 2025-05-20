@@ -1,51 +1,97 @@
 # RSS Aggregator
 
-This is a simple RSS Aggregator written in Go using go-chi and godotenv.
+A simple RSS Aggregator written in Go using [go-chi](https://github.com/go-chi/chi) and [godotenv](https://github.com/joho/godotenv).
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [API Endpoints](#api-endpoints)
+- [Running the Tests](#running-the-tests)
+- [Deployment](#deployment)
+- [Built With](#built-with)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Getting Started
 
-To get a copy of the project up and running on your local machine, follow these steps:
+To get a copy of the project up and running on your local machine:
 
-1. Clone the repository: `git clone https://github.com/NoobAuthor/rss-aggregator.git`
-2. Install the dependencies: `go mod download`
-3. Create a `.env` file and set the required environment variables.
-4. Run the application: `go run main.go`
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/NoobAuthor/rss-aggregator.git
+   cd rss-aggregator
+   ```
+2. **Install dependencies:**
+   ```sh
+   go mod download
+   ```
+3. **Create a `.env` file** in the project root and set the required environment variables (see [Configuration](#configuration)).
+4. **Run the application:**
+   ```sh
+   go run ./cmd/main
+   ```
 
-### Prerequisites
+## Configuration
 
-- Go 1.17 or later
-- A PostgreSQL database
+The following environment variables are required:
 
-### Environment Variables
+- `DATABASE_URL`: URL of your PostgreSQL database (e.g., `postgres://user:pass@localhost:5432/dbname?sslmode=disable`)
+- `PORT`: Port number for the HTTP server (e.g., `8080`)
 
-The following environment variables are required to run the application:
+Example `.env` file:
 
-- `DATABASE_URL`: the URL of the PostgreSQL database
-- `PORT`: the port number to listen on
+```
+DATABASE_URL=postgres://user:pass@localhost:5432/rss?sslmode=disable
+PORT=8080
+```
 
-### Installing
+## API Endpoints
 
-To install the application, run `go install` in the root directory of the project.
+| Method | Path         | Description           |
+| ------ | ------------ | --------------------- |
+| GET    | `/v1/health` | Health check endpoint |
+| GET    | `/v1/error`  | Test error response   |
 
-## Running the tests
+Example health check:
 
-To run the automated tests for this project, run `go test ./...` in the root directory of the project.
+```sh
+curl http://localhost:8080/v1/health
+```
+
+## Running the Tests
+
+To run automated tests:
+
+```sh
+go test ./...
+```
 
 ## Deployment
 
-To deploy the application to a live system, you can use a tool like Docker or Kubernetes.
+You can deploy the application using Docker or Kubernetes.
+
+### Docker Example
+
+1. Build the Docker image:
+   ```sh
+   docker build -t rss-aggregator .
+   ```
+2. Run the container:
+   ```sh
+   docker run --env-file .env -p 8080:8080 rss-aggregator
+   ```
 
 ## Built With
 
-- [go-chi](https://github.com/go-chi/chi) - A lightweight, idiomatic and composable router for building Go HTTP services.
-- [godotenv](https://github.com/joho/godotenv) - A Go port of Ruby's dotenv library (Loads environment variables from `.env`).
+- [go-chi](https://github.com/go-chi/chi) - HTTP router
+- [godotenv](https://github.com/joho/godotenv) - Environment variable loader
+- [sqlx](https://github.com/jmoiron/sqlx) - SQL database library (planned/used for DB access)
 
-## What You Can Learn
+## Contributing
 
-By building this project, I learned:
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-- How to use go-chi to build a RESTful API in Go.
-- How to use godotenv to load environment variables from a `.env` file.
-- How to use sqlx to interact with a PostgreSQL database in Go.
-- How to write automated tests for a Go application.
-- How to deploy a Go application to a live system using Docker or Kubernetes.
+## License
+
+This project is licensed under the MIT License.
