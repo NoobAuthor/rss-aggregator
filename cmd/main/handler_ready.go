@@ -1,7 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/sirupsen/logrus"
+)
 
 func HandlerReadiness(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(w, 200, struct{}{})
+	payload := map[string]string{"status": "ok"}
+	logrus.Info("Health check endpoint called")
+	respondWithJSON(w, http.StatusOK, payload)
 }
+

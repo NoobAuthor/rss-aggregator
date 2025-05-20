@@ -1,24 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
-func main() {
-	godotenv.Load(".env")
-
-	portString := os.Getenv("PORT")
-
-	if portString == "" {
-		log.Fatal("PORT is not found in the environment variables")
+func getEnvOrFatal(key string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		logrus.Fatalf("Required environment variable %s is not set", key)
 	}
+	return value
+}
+
+func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		logrus.WithError(err).Warn(".env file not found or failed to load")
+	}
+
+	portString := getEnvOrFatal("PORT")
 
 	r := chi.NewRouter()
 
@@ -40,10 +45,11 @@ func main() {
 		Handler: r, Addr: ":" + portString,
 	}
 
-	log.Printf("Starting server on port %v", portString)
-	err := srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
+	logrus.WithFields(logrus.Fields{
+		"port": portString,
+	}).Info("Starting server")
+
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logrus.WithError(err).Fatal("Server failed to start or stopped unexpectedly")
 	}
-	fmt.Println("PORT is", portString)
 }
